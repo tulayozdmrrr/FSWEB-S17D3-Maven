@@ -1,10 +1,9 @@
 package com.workintech.zoo.controller;
 
+
 import com.workintech.zoo.entity.Kangaroo;
-import com.workintech.zoo.exceptions.ZooException;
-import com.workintech.zoo.validations.ZooKangrooValidation;
+import com.workintech.zoo.validations.ZooKangarooValidation;
 import jakarta.annotation.PostConstruct;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,49 +17,49 @@ public class KangarooController {
 
     @PostConstruct
     public void init() {
-        this.kangaroos = new HashMap<>();
+        kangaroos = new HashMap<>();
     }
 
     @GetMapping
-    public List<Kangaroo> find() {
+    public List<Kangaroo> find(){
         return this.kangaroos.values().stream().toList();
-
     }
-
     @GetMapping("/{id}")
-    public Kangaroo find(@PathVariable ("id") Integer id) {
-     ZooKangrooValidation.isIdValid(id);
-     ZooKangrooValidation.chechKangrooExistence(kangaroos,id,true);
-     return kangaroos.get(id);
+    public Kangaroo find(@PathVariable("id") Integer id) {
+        ZooKangarooValidation.isIdValid(id);
+        ZooKangarooValidation.checkKangarooExistence(kangaroos,id,true);
+        return kangaroos.get(id);
     }
+
     @PostMapping
-    public  Kangaroo save(@RequestBody Kangaroo kangaroo){
-        ZooKangrooValidation.chechKangrooExistence(kangaroos, (int) kangaroo.getId(),false);
-        ZooKangrooValidation.chechKangarooWeight(kangaroo.getWeight());
-        kangaroos.put((int) kangaroo.getId(),kangaroo);
+    public Kangaroo save(@RequestBody Kangaroo kangaroo) {
+        ZooKangarooValidation.checkKangarooExistence(kangaroos,kangaroo.getId(),false);
+        ZooKangarooValidation.checkKangarooWeight(kangaroo.getWeight());
+        kangaroos.put(kangaroo.getId(),kangaroo);
         return kangaroos.get(kangaroo.getId());
-
     }
 
-    @PutMapping
-    public Kangaroo update (@PathVariable int id,@RequestBody Kangaroo kangaroo){
-        ZooKangrooValidation.isIdValid(id);
-        ZooKangrooValidation.chechKangarooWeight(kangaroo.getWeight());
+    @PutMapping("/{id}")
+    public Kangaroo update(@PathVariable("id") Integer id,@RequestBody Kangaroo kangaroo) {
+        ZooKangarooValidation.isIdValid(id);
+        ZooKangarooValidation.checkKangarooWeight(kangaroo.getWeight());
         kangaroo.setId(id);
         if(kangaroos.containsKey(id)){
             kangaroos.put(id,kangaroo);
             return kangaroos.get(id);
         }
-        else {
+        else{
             return save(kangaroo);
         }
     }
-@DeleteMapping("/{id}")
-    public Kangaroo delete(@PathVariable Integer id){
-        ZooKangrooValidation.isIdValid(id);
-        ZooKangrooValidation.chechKangrooExistence(kangaroos,id,true);
+
+    @DeleteMapping("/{id}")
+    public Kangaroo delete(@PathVariable("id") Integer id) {
+        ZooKangarooValidation.isIdValid(id);
+        ZooKangarooValidation.checkKangarooExistence(kangaroos,id,true);
         return kangaroos.remove(id);
-}
+    }
+
 
 
 }
